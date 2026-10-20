@@ -15,7 +15,7 @@
             <a href="/" class="text-2xl font-black">
                 Portal<span class="text-blue-400">Berita.</span>
             </a>
-            <a href="{{ route('login') }}" class="rounded-lg border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800">
+            <a href="@can('access-admin'){{ route('admin.articles.index') }}@else{{ route('login') }}@endcan" class="rounded-lg border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800">
                 Admin
             </a>
         </div>

@@ -17,6 +17,24 @@ class AdminAuthenticationTest extends TestCase
         $response->assertRedirect('/admin/login');
     }
 
+    public function test_welcome_admin_link_takes_guest_to_login(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertSee('href="' . route('login') . '"', false);
+    }
+
+    public function test_welcome_admin_link_takes_admin_to_dashboard(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $response = $this->actingAs($admin)->get('/');
+
+        $response->assertOk();
+        $response->assertSee('href="' . route('admin.articles.index') . '"', false);
+    }
+
     public function test_admin_can_log_in_and_open_the_dashboard(): void
     {
         $admin = User::factory()->create([
