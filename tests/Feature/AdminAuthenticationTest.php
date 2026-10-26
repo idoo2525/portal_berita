@@ -22,7 +22,7 @@ class AdminAuthenticationTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk();
-        $response->assertSee('href="' . route('login') . '"', false);
+        $response->assertSee('href="'.route('login').'"', false);
     }
 
     public function test_welcome_admin_link_takes_admin_to_dashboard(): void
@@ -32,7 +32,7 @@ class AdminAuthenticationTest extends TestCase
         $response = $this->actingAs($admin)->get('/');
 
         $response->assertOk();
-        $response->assertSee('href="' . route('admin.articles.index') . '"', false);
+        $response->assertSee('href="'.route('admin.articles.index').'"', false);
     }
 
     public function test_admin_can_log_in_and_open_the_dashboard(): void
@@ -50,7 +50,10 @@ class AdminAuthenticationTest extends TestCase
 
         $response->assertRedirect('/admin/berita');
         $this->assertAuthenticatedAs($admin);
-        $this->get('/admin/berita')->assertOk();
+        $dashboard = $this->get('/admin/berita');
+        $dashboard->assertOk();
+        $dashboard->assertSee('Navigasi admin', false);
+        $dashboard->assertSee('Tambah berita');
     }
 
     public function test_non_admin_cannot_access_the_admin_panel(): void

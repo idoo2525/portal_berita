@@ -4,16 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $article->title }} | PortalBerita</title>
+    <title>{{ $article->title }} | KabarKita</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/kabarkita-mark.svg') }}?v=1">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-800">
 
     <header class="bg-slate-950 text-white">
         <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-            <a href="/" class="text-2xl font-black">
-                Portal<span class="text-blue-400">Berita.</span>
-            </a>
+            @include('partials.brand', ['variant' => 'light', 'size' => 'medium'])
             <a href="/" class="text-sm text-slate-300 hover:text-white">
                 ← Kembali ke Beranda
             </a>
@@ -22,7 +21,7 @@
 
     <main class="mx-auto max-w-4xl px-5 py-10 md:py-16">
 
-        <span class="rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
+        <span class="rounded-full bg-[#eaf1e8] px-4 py-2 text-sm font-bold text-[#176b52]">
             {{ $article->category }}
         </span>
 
@@ -44,7 +43,7 @@
         @endif
 
         @if ($article->excerpt)
-            <p class="mt-8 border-l-4 border-blue-600 pl-5 text-lg font-medium leading-8 text-slate-600">
+            <p class="mt-8 border-l-4 border-[#176b52] pl-5 text-lg font-medium leading-8 text-slate-600">
                 {{ $article->excerpt }}
             </p>
         @endif
@@ -54,7 +53,7 @@
         </article>
 
         <div class="mt-12 border-t border-slate-200 pt-6">
-            <a href="/" class="font-bold text-blue-600 hover:text-blue-800">
+            <a href="/" class="font-bold text-[#176b52] hover:text-[#105640]">
                 ← Baca berita lainnya
             </a>
         </div>
@@ -62,7 +61,7 @@
     </main>
 
     <footer class="bg-slate-950 px-6 py-8 text-center text-sm text-slate-400">
-        © {{ date('Y') }} PortalBerita
+        © {{ date('Y') }} KabarKita
     </footer>
 
 </body>

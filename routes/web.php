@@ -4,19 +4,47 @@
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Models\Article;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 
 // HALAMAN DEPAN
-Route::get('/', function () {
-    $articles = Article::where('is_published', true)
-        ->whereNotNull('published_at')
-        ->latest('published_at')
-        ->get();
+Route::get('/', function (Request $request) {
+    $search = trim($request->query('q', ''));
+    $category = trim($request->query('category', ''));
 
-    return view('welcome', compact('articles'));
-});
+    $articles = Article::query()
+        ->where('is_published', true)
+        ->whereNotNull('published_at')
+        ->when($search !== '', function (Builder $query) use ($search): void {
+            $query->where(function (Builder $query) use ($search): void {
+                $query->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('excerpt', 'like', '%'.$search.'%');
+            });
+        })
+        ->when($category !== '', fn (Builder $query): Builder => $query->where('category', $category))
+        ->latest('published_at')
+        ->paginate(10)
+        ->withQueryString();
+    $featuredArticle = $articles->first();
+    $supportingArticles = $articles->getCollection()->skip(1);
+
+    $categories = Article::query()
+        ->where('is_published', true)
+        ->whereNotNull('published_at')
+        ->distinct()
+        ->orderBy('category')
+        ->pluck('category');
+
+    return view('welcome', compact(
+        'articles',
+        'categories',
+        'search',
+        'category',
+        'featuredArticle',
+        'supportingArticles',
+    ));
+})->name('home');
 
 Route::get('/admin/login', [AuthController::class, 'create'])
     ->middleware('guest')
@@ -35,43 +63,9 @@ Route::middleware(['auth', 'can:access-admin'])
         Route::get('/berita', [ArticleController::class, 'index'])->name('articles.index');
         Route::get('/berita/tambah', [ArticleController::class, 'create'])->name('articles.create');
         Route::post('/berita', [ArticleController::class, 'store'])->name('articles.store');
-
-        Route::get('/berita/{id}/edit', function ($id) {
-            $article = Article::findOrFail($id);
-
-            return view('admin.articles.edit', compact('article'));
-        })->name('articles.edit');
-
-        Route::put('/berita/{id}', function (Request $request, $id) {
-            $article = Article::findOrFail($id);
-
-            $data = $request->validate([
-                'title' => 'required|string|max:255',
-                'category' => 'required|string|max:100',
-                'excerpt' => 'nullable|string|max:1000',
-                'content' => 'required|string',
-                'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-                'is_published' => 'nullable|boolean',
-            ]);
-
-            if ($request->hasFile('image')) {
-                if ($article->image) {
-                    Storage::disk('public')->delete($article->image);
-                }
-
-                $data['image'] = $request->file('image')->store('articles', 'public');
-            }
-
-            $data['is_published'] = $request->boolean('is_published');
-            $data['published_at'] = $data['is_published']
-                ? ($article->published_at ?? now())
-                : null;
-
-            $article->update($data);
-
-            return redirect()->route('admin.articles.index')
-                ->with('success', 'Berita berhasil diperbarui!');
-        })->name('articles.update');
+        Route::get('/berita/{article}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+        Route::put('/berita/{article}', [ArticleController::class, 'update'])->name('articles.update');
+        Route::delete('/berita/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
     });
 
 // DETAIL BERITA

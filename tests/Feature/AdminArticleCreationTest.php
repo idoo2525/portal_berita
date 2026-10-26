@@ -50,5 +50,9 @@ class AdminArticleCreationTest extends TestCase
         $response->assertSee('name="title"', false);
         $response->assertSee('name="image"', false);
         $response->assertSee('enctype="multipart/form-data"', false);
+        $response->assertSee('Navigasi admin', false);
+        $response->assertSee('Tambah berita');
+        $response->assertDontSee('Kembali ke daftar berita');
+        $response->assertDontSee('Batal');
     }
 }

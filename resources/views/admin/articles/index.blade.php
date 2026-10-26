@@ -4,46 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Berita | Portal Berita</title>
+    <title>Kelola Berita | KabarKita</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/kabarkita-mark.svg') }}?v=1">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 text-slate-800">
+<body class="bg-[#f4f6f1] text-[#17211e]">
 
     <div class="min-h-screen md:flex">
 
-        <!-- Sidebar -->
-        <aside class="w-full bg-slate-900 p-6 text-white md:min-h-screen md:w-64">
-            <h1 class="text-2xl font-extrabold">
-                Portal<span class="text-blue-400">Berita.</span>
-            </h1>
-
-            <p class="mt-2 text-sm text-slate-400">Panel Administrator</p>
-
-            <nav class="mt-8 space-y-2">
-                <a href="/admin/berita"
-                   class="block rounded-xl bg-blue-600 px-4 py-3 font-semibold">
-                    📰 Kelola Berita
-                </a>
-
-                <a href="/admin/berita/tambah"
-                   class="block rounded-xl px-4 py-3 text-slate-300 hover:bg-slate-800">
-                    ✍️ Tambah Berita
-                </a>
-
-                <a href="/"
-                   class="block rounded-xl px-4 py-3 text-slate-300 hover:bg-slate-800">
-                    🌐 Lihat Website
-                </a>
-            </nav>
-        </aside>
+        @include('admin.partials.sidebar')
 
         <!-- Konten utama -->
         <main class="min-w-0 flex-1 p-5 md:p-10">
 
             <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div>
-                    <p class="text-sm font-semibold uppercase tracking-widest text-blue-600">
-                        Dashboard
+                    <p class="text-sm font-semibold uppercase tracking-widest text-[#176b52]">
+                        Ruang Redaksi
                     </p>
                     <h2 class="mt-2 text-3xl font-extrabold">
                         Kelola Berita
@@ -53,18 +30,10 @@
                     </p>
                 </div>
 
-                <div class="flex flex-wrap gap-3">
-                    <a href="/admin/berita/tambah"
-                       class="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-bold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700">
-                        + Tambah Berita
-                    </a>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="rounded-xl border border-slate-300 px-5 py-3 font-semibold hover:bg-slate-50">
-                            Keluar
-                        </button>
-                    </form>
-                </div>
+                <a href="{{ route('admin.articles.create') }}"
+                   class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[#176b52] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#105640]">
+                    <span aria-hidden="true" class="text-lg leading-none">+</span> Tambah berita
+                </a>
             </div>
 
             <!-- Notifikasi -->
@@ -87,21 +56,21 @@
 
             <!-- Statistik -->
             <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="rounded-lg border border-[#e0e6dd] bg-white p-6 shadow-sm">
                     <p class="text-sm text-slate-500">Total Artikel</p>
                     <p class="mt-2 text-3xl font-extrabold">
                         {{ $articles->count() }}
                     </p>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="rounded-lg border border-[#e0e6dd] bg-white p-6 shadow-sm">
                     <p class="text-sm text-slate-500">Sudah Terbit</p>
                     <p class="mt-2 text-3xl font-extrabold text-green-600">
                         {{ $articles->where('is_published', true)->count() }}
                     </p>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="rounded-lg border border-[#e0e6dd] bg-white p-6 shadow-sm">
                     <p class="text-sm text-slate-500">Draft</p>
                     <p class="mt-2 text-3xl font-extrabold text-amber-600">
                         {{ $articles->where('is_published', false)->count() }}
@@ -110,7 +79,7 @@
             </div>
 
             <!-- Tabel berita -->
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="overflow-hidden rounded-lg border border-[#e0e6dd] bg-white shadow-sm">
 
                 <div class="flex flex-col justify-between gap-3 border-b border-slate-100 p-6 sm:flex-row sm:items-center">
                     <div>
@@ -132,19 +101,20 @@
                             Yuk, buat artikel pertamamu!
                         </p>
                         <a href="/admin/berita/tambah"
-                           class="mt-5 inline-block rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
+                           class="mt-5 inline-block rounded-xl bg-[#176b52] px-5 py-3 font-semibold text-white hover:bg-[#105640]">
                             + Buat Berita
                         </a>
                     </div>
                 @else
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                            <thead class="bg-[#f4f6f1] text-xs uppercase tracking-wider text-slate-500">
                                 <tr>
                                     <th class="px-6 py-4">Artikel</th>
                                     <th class="px-6 py-4">Kategori</th>
                                     <th class="px-6 py-4">Status</th>
                                     <th class="px-6 py-4">Tanggal</th>
+                                    <th class="px-6 py-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
 
@@ -182,7 +152,7 @@
                                         </td>
 
                                         <td class="whitespace-nowrap px-6 py-4">
-                                            <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                                            <span class="rounded-full bg-[#eaf1e8] px-3 py-1 text-xs font-semibold text-[#176b52]">
                                                 {{ $article->category }}
                                             </span>
                                         </td>
@@ -201,6 +171,25 @@
 
                                         <td class="whitespace-nowrap px-6 py-4 text-slate-500">
                                             {{ $article->created_at?->format('d M Y') ?? '-' }}
+                                        </td>
+
+                                        <td class="whitespace-nowrap px-6 py-4">
+                                            <div class="flex justify-end gap-2">
+                                                <a href="{{ route('admin.articles.edit', $article) }}"
+                                                   class="inline-flex min-h-9 items-center gap-2 rounded-md border border-[#c9d9cf] px-3 text-sm font-semibold text-[#176b52] transition hover:bg-[#eaf1e8]">
+                                                    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 5 5 5M4 20l4.2-.8L19 8.4a2.1 2.1 0 0 0-3-3L5.2 16.2 4 20Z"/></svg>
+                                                    Edit
+                                                </a>
+                                                <form action="{{ route('admin.articles.destroy', $article) }}" method="POST"
+                                                      onsubmit="return confirm('Hapus berita ini? Foto berita juga akan dihapus.');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="inline-flex min-h-9 items-center gap-2 rounded-md border border-red-200 px-3 text-sm font-semibold text-red-700 transition hover:bg-red-50">
+                                                        <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16m-10 4v6m4-6v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
